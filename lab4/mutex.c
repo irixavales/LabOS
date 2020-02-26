@@ -10,23 +10,28 @@ int buffer [BUFFER_SIZE];
 
 pthread_t tid;
 pthread_mutex_t mutex1 = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t  condition_cond  = PTHREAD_COND_INITIALIZER;
 
 void insert(int item){
-   while ((in + 1) % BUFFER_SIZE == out);
    pthread_mutex_lock(&mutex1);
+   if((in+1)%BUFFER_SIZE == 0)
+      pthread_cond_wait(&condition_cond, &mutex1);
    buffer[in] = item;
    in = (in + 1) % BUFFER_SIZE;
    pthread_mutex_unlock(&mutex1);
-   sleep(1); 
+   pthread_cond_signal(&condition_cond);
+   sleep(1);
 }
 
 int remove_item(){
    int item;
-   while (in == out);
    pthread_mutex_lock(&mutex1);
+   if(in == out) 
+      pthread_cond_wait(&condition_cond, &mutex1);
    item = buffer[out];
    out = (out + 1) % BUFFER_SIZE;
    pthread_mutex_unlock(&mutex1);
+   pthread_cond_signal(&condition_cond);
    sleep(1); 
    return item;
 }
