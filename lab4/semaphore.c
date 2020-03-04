@@ -2,42 +2,38 @@
 #include <semaphore.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #define BUFFER_SIZE 20
 
-int in = 0, out = 0;
+int in = 0, out = 0, count = 0;
 int buffer [BUFFER_SIZE];
 
 pthread_t tid;
-pthread_mutex_t mutex1 = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t  condition_cond  = PTHREAD_COND_INITIALIZER;
+sem_t sem;
+sem_t full;
+sem_t empty;
 
 void insert(int item){
-   
-   pthread_cond_wait(&condition_cond, &mutex1);
-if((in+1)%BUFFER_SIZE != 0) {
-pthread_mutex_lock(&mutex1);
-   //while ((in + 1) % BUFFER_SIZE == out);
+   sem_wait(&empty);
+   sem_wait(&sem);
    buffer[in] = item;
    in = (in + 1) % BUFFER_SIZE;
-   pthread_mutex_unlock(&mutex1);
-   pthread_cond_signal(&condition_cond);
-   sleep(1); }
+   sleep(1);   
+   sem_post(&sem);
+   sem_post(&full);
 }
 
 int remove_item(){
    int item;
-  
-   //while (in == out);
-   pthread_cond_wait(&condition_cond, &mutex1);
-if(in != out) {
- pthread_mutex_lock(&mutex1);
+   sem_wait(&full);
+   sem_wait(&sem);
    item = buffer[out];
    out = (out + 1) % BUFFER_SIZE;
-   pthread_mutex_unlock(&mutex1);
-   pthread_cond_signal(&condition_cond);
-   sleep(1); 
-   return item;}
+   sleep(1);    
+   sem_post(&sem);
+   sem_post(&empty);
+   return item;
 }
 
 void * producer(void * param){
@@ -59,15 +55,28 @@ void * consumer(void * param){
 
 int main(int argc, char * argv[])
 {
+    sem_init(&sem, 0, 1);
+    sem_init(&full, 0 , 0);
+    sem_init(&empty, 0, BUFFER_SIZE);
+
     int producers = atoi(argv[1]);
     int consumers = atoi(argv[2]);
+    pthread_t tid_producers[producers];
+    pthread_t tid_consumers[consumers];
+    
     int i;
 
     for (i = 0; i < producers; i++)
-       pthread_create(&tid, NULL, producer,NULL);
+       pthread_create(&tid_producers[i], NULL, producer,NULL);
 
     for (i = 0; i < consumers; i++)
-       pthread_create(&tid, NULL, consumer, NULL); 
+       pthread_create(&tid_consumers[i], NULL, consumer, NULL); 
 
-    pthread_join(tid,NULL);
+    for (i = 0; i < producers; i++)
+       pthread_join(tid_producers[i],NULL);
+
+    for (i = 0; i < consumers; i++)
+       pthread_join(tid_consumers[i],NULL);
+
+    sem_destroy(&sem);
 }

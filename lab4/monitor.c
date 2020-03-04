@@ -9,10 +9,14 @@ int in = 0, out = 0;
 int buffer [BUFFER_SIZE];
 
 pthread_mutex_t mutex;
+pthread_cond_t full, empty;
 
 void insert(int item){
-   while ((in + 1) % BUFFER_SIZE == out);
    pthread_mutex_lock(&mutex);
+   if ((in + 1) % BUFFER_SIZE == out) {
+	pthread_cond_signal(&empty);
+	pthread_cond_wait(&full, &mutex);	
+   }
    buffer[in] = item;
    in = (in + 1) % BUFFER_SIZE;
    sleep(1);
@@ -21,12 +25,15 @@ void insert(int item){
 
 int remove_item(){
    int item;
-   while (in == out);
    pthread_mutex_lock(&mutex);
+   if (in == out) {
+	pthread_cond_signal(&full);
+	pthread_cond_wait(&empty, &mutex);
+   }
    item = buffer[out];
    out = (out + 1) % BUFFER_SIZE;
-   sleep(1);   
-   pthread_mutex_unlock(&mutex); 
+   sleep(1);
+   pthread_mutex_unlock(&mutex);
    return item;
 }
 
