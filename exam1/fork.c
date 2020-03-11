@@ -11,7 +11,7 @@ int main ()
 	}
 
 	// this is to construct a process tree
-	// printf("process id: %d, my parent is: %d\n", getpid(), getppid());
-	printf("2 ");
+	printf("process id: %d, my parent is: %d\n", getpid(), getppid());
+	// printf("2 ");
 	return 0;
 }
