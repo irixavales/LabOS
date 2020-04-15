@@ -1,0 +1,103 @@
+MINIX booting
+APIC disabled, using legacy PIC
+
+MINIX 3.2.1. (972156d)
+Copyright 2012, Vrije Universiteit, Amsterdam, The Netherlands
+MINIX is open source software, see http://www.minix3.org
+Initiating legacy i8253 timer
+CPU 0 freq 1189 MHz
+kernel: selecting intel sysenter ipc style
+TTY: not initializing rs232 line 0 (in use by kernel)
+Started VFS: 8 worker thread(s)
+
+FIRST FIT
+
+BEST FIT
+-----BEST FIT CANDIDATE-----
+Hole size: 1
+Hole start: 1363
+
+FIRST FIT
+startscan: 10869
+low: 0
+pages to reserve: 8
+search restart: 1
+freerange_start: 10861
+11111111
+BEST FIT
+startscan: 10869
+low: 0
+pages to reserve: 8
+-----BEST FIT CANDIDATE-----
+Hole size: 8767
+Hole start: 2102
+-----BEST FIT CANDIDATE-----
+Hole size: 20
+Hole start: 1983
+-----BEST FIT-----
+Hole size: 20
+Hole start: 1983
+
+FIRST FIT
+
+BEST FIT
+-----BEST FIT CANDIDATE-----
+Hole size: 8759
+Hole start: 2102
+-----BEST FIT CANDIDATE-----
+Hole size: 20
+Hole start: 1983
+
+FIRST FIT
+startscan: 10814
+low: 0
+pages to reserve: 8
+search restart: 1
+freerange_start: 10806
+11111111
+BEST FIT
+startscan: 10814
+low: 0
+pages to reserve: 8
+-----BEST FIT CANDIDATE-----
+Hole size: 8712
+Hole start: 2102
+-----BEST FIT CANDIDATE-----
+Hole size: 20
+Hole start: 1983
+-----BEST FIT-----
+Hole size: 20
+Hole start: 1983
+
+FIRST FIT
+
+BEST FIT
+-----BEST FIT CANDIDATE-----
+Hole size: 8704
+Hole start: 2102
+-----BEST FIT CANDIDATE-----
+Hole size: 20
+Hole start: 1983
+Wed Apr 15 04:41:39 GMT 2020
+
+FIRST FIT
+startscan: 4095
+low: 0
+pages to reserve: 12
+search restart: 0
+freerange_start: 4084
+111111111111
+BEST FIT
+startscan: 4095
+low: 0
+pages to reserve: 12
+-----BEST FIT CANDIDATE-----
+Hole size: 1994
+Hole start: 2102
+-----BEST FIT CANDIDATE-----
+Hole size: 20
+Hole start: 1983
+-----BEST FIT-----
+Hole size: 20
+Hole start: 1983
+MINIX will now be shut down ...

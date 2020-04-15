@@ -26,8 +26,8 @@ cpuid, q););
                 continue;
         }
         // start lottery algorithm
-        if(0){
-        //if(rp->tickets && rp->tickets>0){
+        //if(0){
+        if(rp->tickets && rp->tickets>0){
            int sum=0; // to find winning ticket
            // get winner ticket randomly
            int winner = rand() % total_qty_tickets;

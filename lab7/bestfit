@@ -1,0 +1,58 @@
+/*===========================================*
+
+ *                 best_fit                  *
+
+ *===========================================*/
+
+static int bestfit(int low, int startscan, int pages)
+{
+        int run_length = 0, i;
+        int freerange_start = startscan;
+	int bestfitSize = 0, bestfitAddr;
+
+        if(pages>2) {
+                printf("startscan: %d\nlow: %d\npages to reserve: %d\n", startscan, low, pages);
+        }
+        int searchRestart = 0;
+
+        for(i = startscan; i >= low; i--) {
+                if(!page_isfree(i)) {	/* page is not free */
+                        searchRestart++;
+                        int pi;
+                        int chunk = i/BITCHUNK_BITS, moved = 0;
+                        run_length = 0;
+                        pi = i;
+                        while(chunk > 0 &&
+                           !MAP_CHUNK(free_pages_bitmap, chunk*BITCHUNK_BITS)) {
+                                chunk--;
+                                moved = 1;
+                        }
+                        if(moved) { i = chunk * BITCHUNK_BITS + BITCHUNK_BITS; }
+                        continue;
+                }
+                if(!run_length) { freerange_start = i; run_length = 1; }
+                else { freerange_start--; run_length++; }
+                assert(run_length <= pages);
+                if(run_length == pages) {  /* found a fit */
+                        while(i-1 >= low && page_isfree(i-1)) { /* get full chunk of free mem space */
+				freerange_start--;
+				run_length++;
+				i--;
+			}
+			if(!bestfitSize || run_length < bestfitSize) { /* check if mem size is smaller than current bestfit */
+				bestfitSize = run_length;
+				bestfitAddr = freerange_start;
+				printf("-----BEST FIT CANDIDATE-----\nHole size: %d\nHole start: %d\n", bestfitSize, bestfitAddr);
+			}
+                }
+        }
+	if(pages>2 && bestfitSize){
+		printf("-----------BEST FIT----------\nHole size: %d\nHole start: %d\n", bestfitSize, bestfitAddr);
+	}
+	else{
+		printf("No memory found.\n");
+	}
+}
+
+
+

@@ -1,0 +1,52 @@
+/*===========================================*
+
+ *               find_fit                    *
+
+ *===========================================*/
+
+static int findbit(int low, int startscan, int pages, int memflags, int *len)
+{
+        int run_length = 0, i;
+        int freerange_start = startscan;
+
+        if(pages>2) {
+                printf("startscan: %d\nlow: %d\npages to reserve: %d\n", startscan, low, pages);
+        }
+        int searchRestart = 0;
+
+        for(i = startscan; i >= low; i--) {
+                if(!page_isfree(i)) {
+                        searchRestart++;
+                        int pi;
+                        int chunk = i/BITCHUNK_BITS, moved = 0;
+                        run_length = 0;
+                        pi = i;
+                        while(chunk > 0 &&
+                           !MAP_CHUNK(free_pages_bitmap, chunk*BITCHUNK_BITS)) {
+                                chunk--;
+                                moved = 1;
+                        }
+                        if(moved) { i = chunk * BITCHUNK_BITS + BITCHUNK_BITS; }
+                        continue;
+                }
+                if(!run_length) { freerange_start = i; run_length = 1; }
+                else { freerange_start--; run_length++; }
+                assert(run_length <= pages);
+                if(run_length == pages) {
+                        /* good block found! */
+                        *len = run_length;
+                        if(pages>2) {
+                                printf("search restart: %d\nfreerange_start: %d\n",searchRestart, freerange_start);
+                                for (int i = freerange_start; i < freerange_start + pages; i++) {
+                                        if(page_isfree(i)) {printf("1");}
+                                        else {printf("0");}
+                                }
+                        }
+                        bestfit(low, startscan, pages);
+                        return freerange_start;
+                }
+        }
+ return NO_MEM;
+}
+
+
